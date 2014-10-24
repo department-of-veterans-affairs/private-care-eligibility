@@ -154,3 +154,15 @@ hr {
 footer {
   padding: 20px 0;
   color: #899297; }
+
+#splash {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 50px;
+  text-align: center;
+  background: #fff;
+  background: rgba(255, 255, 255, 0.95);
+}

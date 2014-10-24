@@ -1,3 +1,5 @@
 # VA Private Care Eligibility
 
-[View the site live »](http://department-of-veterans-affairs.github.io/private-care-eligibility/)
+Disclaimer: This is currently under development and made available for preview and feedback purposes only. Do not distribute publicly.
+
+[View the site »](http://department-of-veterans-affairs.github.io/private-care-eligibility/)
