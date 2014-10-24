@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Private Care Eligibility</title>
+  <meta name="description" content="Determine your eligibility for private health care.">
+  
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  <header id="site-header" class="site-header">
+    <div class="content">
+      <nav>
+        <a class="site-logo" href="/">
+          <img class="site-logo-img" src="/img/logo.png" alt="logo"> Dept. of Veterans Affairs
+        </a>
+      </nav>
+    </div>
+  </header>
+  
+  <div class="main">
+    <div class="content">
+      <h1>Determine your Eligibility for Private Care</h1>
+      <p>If you made your appointment before <span id="current-date">10/24/2014</span>, then you are eligible.</p>
+      
+      <div class="or-divider">OR</div>
+      <hr>
+      
+      <p>If you live farther than 40 miles from a VA health care facility, then you are also eligible.</p>
+      <p>Enter your address to determine your distance from a VA facility.</p>
+      
+      <form id="address-search">
+        Address:
+        <input type="text" name="address" id="address" placeholder="1600 Pennsylvania Avenue NW">
+        <a id="search-btn" href="">Search</a>
+      </form>
+      
+      <div id="eligibility" class="green">You are eligible.</div>
+      
+      <p>Your distance is <span id="distance">52</span> miles from the nearest VA facility.</p>
+      
+      <div id="map">
+        <iframe width="100%" height="400" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/directions?origin=1600+Pennsylvania+Avenue+NW,+Washington,+DC,+United+States&destination=Washington+DC+VA+Medical+Center,+Irving+Street+Northwest,+Washington,+DC,+United+States&key=AIzaSyDgQQnGAfjUqDCPWofMZ6PYAhID3H43Yh0"></iframe>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="section">
+    <div class="content">
+      Something about this being a Dept. of Veterans Affairs website.
+    </div>
+  </footer>
+  
+  <!-- Put scripts here -->
+  
+</body>
+</html>
