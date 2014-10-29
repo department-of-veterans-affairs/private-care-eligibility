@@ -49,9 +49,6 @@ header.site-header {
 .main {
   padding: 25px 0;
   background: #fff; }
-  .main img {
-    max-width: 100%;
-    margin: 15px 0; }
 
 /* Paragraphs */
 /* ------------------------------------------------------ */
@@ -128,20 +125,13 @@ hr {
   background: #fff;
   width: 100px; }
 
-#address-search {
-  width: 100%; }
-
 #address {
   border: 2px solid #bfbfbf;
   max-width: 250px;
   width: 45%;
   display: inline-block; }
 
-#search-btn {
-  margin-left: 10px; }
-
 #eligibility {
-  margin-top: 25px;
   font-weight: bold;
   font-size: 22px; }
 
@@ -165,4 +155,27 @@ footer {
   text-align: center;
   background: #fff;
   background: rgba(255, 255, 255, 0.95);
+}
+
+#map-container {
+  position: relative;
+  margin: 10px 0;
+}
+#map-canvas {
+  margin-left: 20px;
+  width: 400px;
+  height: 300px;
+}
+#facilities {
+  position: absolute;
+  top: 0;
+  left: 440px;
+  height: 300px;
+  overflow: scroll;
+}
+.facility {
+  margin-bottom: 5px;
+}
+.facility-name {
+  font-weight: bold;
 }

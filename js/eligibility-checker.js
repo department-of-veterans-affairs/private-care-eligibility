@@ -22,7 +22,11 @@ var FACILITY_ICON = {
  * TODO(sraub): Allow for selection of only Medical Centers.
  */
 function isQualifiedFacility(facility) {
-  return facility.properties.PRIM_SVC == 'VAMC' ||
+  if (facility.properties.PRIM_SVC == 'IOC') {
+    window.console.log('IOC:', facility.properties.STA_NAME, facility.properties.S_ADD1, facility.properties.S_ADD2);
+  }
+  return facility.properties.PRIM_SVC == 'IOC' ||
+      facility.properties.PRIM_SVC == 'VAMC' ||
       facility.properties.PRIM_SVC == 'CBOC';
 }
 
@@ -105,9 +109,14 @@ function checkEligibility(location, callback) {
     }
     var facilityLocation = new google.maps.LatLng(
         facility.properties.G_LAT, facility.properties.G_LON);
+    var crow = metersToMiles(distVincenty(
+          facilityLocation.lat(), facilityLocation.lng(),
+          location.lat(), location.lng()));
+    /*
     var crow = metersToMiles(
         google.maps.geometry.spherical.computeDistanceBetween(
             facilityLocation, location));
+    */
     if (crow < THRESHOLD_MILES) {
       facilitiesWithDistance.push({
         facility: facility,
@@ -119,41 +128,59 @@ function checkEligibility(location, callback) {
       destinations.push(facilityLocation);
     }
   }
-  if (facilitiesWithDistance.length == 0) {
-    // There are no facilities within 40 miles, as the crow flies.
+  getDrivingDistances(
+      [location], destinations, facilitiesWithDistance, callback);
+}
+
+function getDrivingDistances(origins, destinations, facilities, callback) {
+  if (destinations.length == 0) {
     callback([]);
     return;
   }
-  // TODO(sraub): Add a parameter to allow to use only crow-flies logic.
-  // Use the DistanceMatrixService to get the driving distance between the
-  // location and each of the facilities that is within 40 miles as the crow
-  // flies.
-  var facilitiesWithinDistance = [];
+  // Get driving directions to each facility, checking that they are accessible
+  // without using a ferry, plane, or train. This can be determined by checking
+  // that 1) there is a route and 2) there are no warnings that include the word
+  // "ferry".
+  // TODO(sraub): Using the directions service to check for warnings.
+  var validFacilities = [];
   var service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
-    origins: [location],
+    origins: origins,
     destinations: destinations,
     travelMode: google.maps.TravelMode.DRIVING,
     unitSystem: google.maps.UnitSystem.IMPERIAL,
     durationInTraffic: false,
     avoidHighways: false,
-    avoidTolls: false
+    avoidTolls: false,
+    avoidFerries: true
   }, function(response, status) {
     // Check each destination to see if the driving distance is within 40 miles.
     // If it is, then store it in facilitiesWithinDistance.
     for (var i = 0; i < response.rows[0].elements.length; ++i) {
-      var distance = response.rows[0].elements[i].distance;
-      if (metersToMiles(distance.value) < THRESHOLD_MILES) {
-        var facility = facilitiesWithDistance[i];
-        facility.distance = distance;
-        facilitiesWithinDistance.push(facility);
+      var element = response.rows[0].elements[i];
+      if (element.status != 'OK') {
+        if (element.status != 'ZERO_RESULTS') {
+          window.console.log('An error has occurred.', element.status);
+        }
+        continue;
+      }
+      var distance = element.distance;
+      var facility = facilities[i];
+      facility.distance = distance;
+      validFacilities.push(facility);
+      // Though we don't consider driving distance, print a message for
+      // information's sake that the driving distance is actually greater than
+      // 40 miles.
+      if (metersToMiles(distance.value) > THRESHOLD_MILES) {
+        window.console.log(facility.name + ' is more than 40 miles driving: ' +
+          facility.crowDistance + ' v ' + metersToMiles(distance.value) +
+          ' miles.');
       }
     }
-    // Sort the facilities that are within 40 miles by their distance.
-    facilitiesWithinDistance.sort(function(a, b) {
+    validFacilities.sort(function(a, b) {
       return a.distance.value - b.distance.value;
     });
-    callback(facilitiesWithinDistance);
+    callback(validFacilities);
   });
 }
 
@@ -183,7 +210,9 @@ function updateFacilities(facilities, bounds) {
 
   if (num == 0) {
     document.getElementById('eligible').style.display = '';
+    document.getElementById('not-eligible').style.display = 'none';
   } else {
+    document.getElementById('eligible').style.display = 'none';
     document.getElementById('not-eligible').style.display = '';
   }
 
@@ -194,10 +223,12 @@ function updateFacilities(facilities, bounds) {
     innerHTML += '<div class="facility">' +
       '<div class="facility-name">' + facility.name + '</div>' +
       '<div class="facility-address">' + facility.address.join('<br>') +
-      ' - (' + facility.distance.text + ')</div>';
+      '</div>';
+      //' - (' + facility.distance.text + ')</div>';
       '</div>';
 
-    var diameter = facility.facility.properties.PRIM_SVC == 'VAMC' ? 16 : 12;
+    var diameter = (facility.facility.properties.PRIM_SVC == 'VAMC' ||
+       facility.facility.properties.PRIM_SVC == 'IOC') ? 16 : 12;
     facilityMarkers.push(new google.maps.Marker({
       icon: {
         url: 'img/blue-circle.png',
@@ -261,14 +292,14 @@ function initializeMap() {
 }
 
 var autocomplete;
-function initializeAutocomplete() {
-  function updateRegion() {
-    var region = document.getElementById('region').value;
-    autocomplete.setOptions({
-      componentRestrictions: {country: region}
-    });
-  }
+function updateRegion() {
+  var region = document.getElementById('region').value;
+  autocomplete.setOptions({
+    componentRestrictions: {country: region}
+  });
+}
 
+function initializeAutocomplete() {
   autocomplete = new google.maps.places.Autocomplete(
     document.getElementById('address'), {
       types: ['geocode']
