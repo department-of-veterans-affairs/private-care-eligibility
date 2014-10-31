@@ -225,7 +225,7 @@ function updateFacilities(facilities, bounds) {
     innerHTML += '<div class="facility">' +
       '<div class="facility-name">' + facility.name + '</div>' +
       '<div class="facility-address">' + facility.address.join('<br>') +
-      '</div>';
+      '</div>' +
       //' - (' + facility.distance.text + ')</div>';
       '</div>';
 
