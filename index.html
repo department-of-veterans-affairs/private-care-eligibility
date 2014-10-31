@@ -43,13 +43,16 @@ ibraries=places,geometry"></script>
       <p>Enter your address to determine your distance from a VA facility.</p>
       
       <div id="input-entry">
-        Region: <select id="region" onchange="updateRegion()">
+        <label for="region">Region: </label>
+        <select id="region" onchange="updateRegion()">
           <option value="as">American Samoa</option>
           <option value="gu">Guam</option>
           <option value="pr">Puerto Rico</option>
           <option value="us" selected="selected">United States</option>
         </select>
-        Address: <input type="text" id="address"/>
+        <br>
+        <label for="address">Address: </label>
+        <input type="text" id="address"/>
       </div>
       
       <div id="eligibility">
