@@ -211,9 +211,11 @@ function updateFacilities(facilities, bounds) {
   if (num == 0) {
     document.getElementById('eligible').style.display = '';
     document.getElementById('not-eligible').style.display = 'none';
+    document.getElementById('facilities').style.display = 'none';
   } else {
     document.getElementById('eligible').style.display = 'none';
     document.getElementById('not-eligible').style.display = '';
+    document.getElementById('facilities').style.display = '';
   }
 
   var facilityDiv = document.getElementById('facilities');
